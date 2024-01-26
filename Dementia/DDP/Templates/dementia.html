@@ -1,0 +1,167 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Add Bootstrap CSS link -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    
+    <style>
+        /* Background image and color */
+        body {
+            background-image: url("https://neurosciencenews.com/files/2023/08/adult-education-dementia-neuroscience.jpg"); /* Replace 'your-background-image.jpg' with your image URL */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed; 
+            /* Fallback color if the image doesn't load */
+        }
+
+        /* Form background color and text color */ 
+        .container {
+            background-color: rgba(156, 156, 156, 0.6); /* Semi-transparent white background for the form container */
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .text-right {
+            font-size: 30px;
+            color:rgb(253, 252, 252);
+            font-family: 'Times New Roman', Times, serif;
+        }
+        /*.text-center {
+            font-style: bold;
+            font-size: 190%;
+            color:darkblue;
+        }*/
+        .text-left {
+            font-family: Impact, 'Haettenschweiler', 'Arial Narrow Bold', sans-serif;
+            font-size: 50px;
+            color:rgb(252, 235, 4);
+        }
+        /* Form button color */
+        .btn-primary {
+            background-color: #007bff; /* Blue color for the "Predict" button */
+        }
+
+        /* Result text color */
+        .result {
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background for the form container */
+            padding: 20px;
+            border-radius: 10px
+             
+        }
+        h1 {
+            color:rgb(85, 232, 203);
+            font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            font-size: 100px;
+            font-style: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1> DEMENTIA DISEASE PREDICTION</h1>
+    <div class="container mt-5">
+        <form method="POST">
+            {% csrf_token %}
+
+            <fieldset>
+                <legend>Algorithm</legend>
+                <div>
+                    <label><input type="radio" name="alg" value="0" checked>Random Forest</label>
+                    <label><input type="radio" name="alg" value="1">Naive Bayes</label>
+                    <label><input type="radio" name="alg" value="2">Decision Tree</label>
+                    
+                </div>
+            </fieldset>
+
+            <div class="form-group row">
+                <label for="MRI ID" class="col-sm-6 col-form-label text-right">Enter the MRI_ID:</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" id="MRI ID" name="MRI ID">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="Gender" class="col-sm-6 col-form-label text-right">Enter the Gender:</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" id="Gender" name="Gender">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="Age" class="col-sm-6 col-form-label text-right">Enter the Age :</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" id="Age" name="Age">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="EDUC" class="col-sm-6 col-form-label text-right">Enter the Education:</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" id="EDUC" name="EDUC">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="SES" class="col-sm-6 col-form-label text-right">Enter the Socio-Economic Status:</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" id="SES" name="SES">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="MMSE" class="col-sm-6 col-form-label text-right">Enter the Mini-Mental-State-Examination Value:</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" id="MMSE" name="MMSE">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="CDR" class="col-sm-6 col-form-label text-right">Enter the Clinical-dementia-Rating Value:</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" id="CDR" name="CDR">
+                </div>
+            </div>
+            <div class="form-group row">
+              <label for="eTIV" class="col-sm-6 col-form-label text-right">Enter the Total-Intracranial-Volume Value:</label>
+              <div class="col-sm-6">
+                  <input type="text" class="form-control" id="eTIV" name="eTIV">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="nBWV" class="col-sm-6 col-form-label text-right">Enter the Body-Weight-Variability Value:</label>
+              <div class="col-sm-6">
+                  <input type="text" class="form-control" id="nBWV" name="nBWV">
+              </div>
+            </div>
+            <!-- ... (Rest of your form elements) ... -->
+
+            <div class="form-group row">
+                <div class="col-sm-6 offset-sm-6">
+                    <button type="submit" class="btn btn-primary" name="Submit">Predict</button>
+                </div>
+            </div>
+        </form>
+        <div class="row mt-3">
+            <div class="col-sm-6 offset-sm-6">
+                <p class="text-left">The Group Is:</p>
+                <p class="result text-center">{{result}}</p>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-sm-6 offset-sm-6">
+                <p class="text-left">Model Accuracy Is:</p>
+                <p class="result text-center">{{acc}}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Bootstrap JS and Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+
+
+
+{% endblock %}
